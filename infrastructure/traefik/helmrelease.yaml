@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: traefik
+  namespace: traefik
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: traefik
+      sourceRef:
+        kind: HelmRepository
+        name: traefik
+        namespace: traefik
+  values:
+    providers:
+      kubernetesIngress:
+        enabled: true
+        publishedService:
+          enabled: true
+          path: "traefik/traefik"
+    ingressClass:
+      enabled: true
+      isDefaultClass: false
+      name: traefik
+    service:
+      type: LoadBalancer
+      
+    ports:
+      web:
+        port: 80
+        #nodePort: 30000
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
+            permanent: true
+      websecure:
+        port: 443
+        #nodePort: 30001
+    ingressRoute:
+      dashboard:
+        enabled: true
+        matchRule: Host(`dashboard.testhicham.com`)
+        entryPoints:
+          - websecure
+        #middlewares:
+          #- name: dashboard-auth
+
+    #helm upgrade traefik traefik/traefik   --namespace traefik --create-namespace  --values traefik-vaule.yaml
