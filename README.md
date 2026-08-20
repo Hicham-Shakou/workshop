@@ -75,7 +75,7 @@ flux bootstrap github \
   --owner <GITHUB_USER_OR_ORG> \
   --repository <REPO_NAME> \
   --branch main \
-  --path clusters/dev \
+  --path clusters/main \
   --personal \
   --token-auth
 
